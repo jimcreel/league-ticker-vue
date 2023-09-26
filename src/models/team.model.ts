@@ -1,6 +1,6 @@
 export interface Team {
 
-    id?: string | null,
+    id?: number | null,
     name: string,
     season?: number,
     abbreviation: string,

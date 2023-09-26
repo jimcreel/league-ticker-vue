@@ -6,20 +6,19 @@ import { Team } from "../models/team.model"
 
 
 
-export async function getLeagues(): Promise<League[]> {
+export async function getLeagues(leagues: ReturnType<typeof useLeagueStore>): Promise<void> {
   try {
-    const leagueStore = useLeagueStore()
+    
     const { data } = await supabase
       .from('league_lu')
-      .select('*') as { data: League[] }; // Use type assertion
+      .select('*') // Use type assertion
 
     // Handle the case where data might be null
     if (data === null) {
       throw new Error('Data is null.'); // You can handle this error as needed
     }
-
-    leagueStore.setInitialState(data);
-    return data;
+    console.log('api getLeagues', data)
+    leagues.setInitialState(data);
   } catch (error) {
     console.error('Error fetching leagues:', error);
     throw error; // You can handle the error further or rethrow it if needed
@@ -69,23 +68,45 @@ export async function createLeague(req:League) {
     return data
 }
 
-export async function createTeam(req:Team) {
-    const { data, error } = await supabase
-    .from('teams')
-    .insert(req)
-    if (error) {
-        console.log(error)
-    }
-    return data
+export async function createTeam(req: Team, league: number): Promise<Team | undefined> {
+  try {
+      console.log('createTeam api', req);
+      await supabase
+          .from('teams')
+          .insert(req)
+          .select('*')
+          .then((data) => {
+              console.log('createTeam', data);
+              if (data.data) {
+                  const leagueTeam: LeagueTeam = {
+                      league_id: league,
+                      team_id: data.data[0].id,
+                  };
+                  createLeagueTeam(leagueTeam);
+                  return data.data[0];
+              }
+          });
+      
+      return undefined;
+  } catch (error) {
+      console.error('Error creating team:', error);
+      return undefined;
+  }
 }
 
+
+
 export async function createLeagueTeam(req: LeagueTeam){
+    console.log('createLeagueTeam api',req)
     const {data, error} = await supabase
     .from('league_team')
     .insert(req)
+    .select('*')
+
     if (error) {
         console.log(error)
     }
+    console.log('createLeagueTeam', data)
     return data
 }
 

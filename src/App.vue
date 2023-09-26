@@ -1,50 +1,27 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
-    <div v-for="league in leagues" :key="league.id">
-      <p>{{ league.name }}</p>
-    </div>
-  </div>
+  <LeagueSelect />
+  
+  
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
-import { getLeagues } from './api/api';
-import { League } from './models/league.model';
+import { defineComponent } from 'vue';
+import  LeagueSelect  from './components/LeagueSelect.vue';
 
 export default defineComponent({
-  name: 'App',
   components: {
-    HelloWorld
-  },
-  setup() {
-    const leagues = ref<League[]>([]);
-
-    onMounted(async () => {
-      try {
-        const data = await getLeagues();
-        leagues.value = data; // Update the leagues data
-      } catch (error) {
-        console.error('Error fetching leagues:', error);
-      }
-    });
-
-    return {
-      leagues,
-    };
+    LeagueSelect
   },
 });
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style> 
+body {
+  background-color: #03A9F4;
+}
+.weather-icon {
+  width: 150px;
+  height: 150px;
 }
 </style>
+

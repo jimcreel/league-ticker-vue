@@ -1,5 +1,5 @@
 export interface LeagueTeam {
-    id?: string | null
+    id?: number | null
     league_id: number
     team_id: number
 }
